@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 
 @app.route("/", strict_slashes=False)
-def index():
+def Greeting():
     """return a Hello HBNB"""
     return 'Hello HBNB!'
 
