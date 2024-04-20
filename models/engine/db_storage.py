@@ -12,18 +12,20 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
+
 class DBStorage:
     __engine = None
     __session = None
 
     def __init__(self):
         """Initialize DBStorage instance"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                       .format(getenv('HBNB_MYSQL_USER'),
-                                               getenv('HBNB_MYSQL_PWD'),
-                                               getenv('HBNB_MYSQL_HOST', 'localhost'),
-                                               getenv('HBNB_MYSQL_DB')),
-                                       pool_pre_ping=True)
+        self.__engine = create_engine(
+            'mysql+mysqldb://{}:{}@{}/{}'
+            .format(getenv('HBNB_MYSQL_USER'),
+                    getenv('HBNB_MYSQL_PWD'),
+                    getenv('HBNB_MYSQL_HOST',
+                           'localhost'),
+                    getenv('HBNB_MYSQL_DB')), pool_pre_ping=True)
 
         if getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
@@ -61,5 +63,10 @@ class DBStorage:
     def reload(self):
         """Create all tables and current database session"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         self.__session = scoped_session(session_factory)
+
+    def close(self):
+        """call remove method on the private session"""
+        self.__session.remove()
