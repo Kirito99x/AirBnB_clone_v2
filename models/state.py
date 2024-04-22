@@ -9,11 +9,17 @@ from os import environ as ev
 
 class State(BaseModel, Base):
     """ State class """
-    __tablename__ = 'states'
+    if models.storage == "db":
+        __tablename__ = 'states'
 
-    name = Column(String(128), nullable=False)
-    cities = relationship("City", backref="state",
+        name = Column(String(128), nullable=False)
+        cities = relationship("City", backref="state",
                           cascade="all, delete-orphan")
+    else:
+        name = ""
+    def __init__(self, *args, **kwargs):
+        """ init method"""
+        super().__init__(*args, **kwargs)
 
     if ev.get('HBNB_TYPE_STORAGE') != 'db':
         @property
